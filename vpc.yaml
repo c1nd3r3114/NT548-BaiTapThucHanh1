@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 200.13.11.0/24
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: idk-test-vpc
+
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: idk-test-internet-gw
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref MyInternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 200.13.11.0/25
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      Tags:
+        - Key: Name
+          Value: idk-test-public-subnet
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 200.13.11.128/25
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      Tags:
+        - Key: Name
+          Value: idk-test-private-subnet
+
+  DefaultSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: idk-test default security group for VPC
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: idk-test-default-sec-group
+      SecurityGroupIngress:
+        - IpProtocol: -1  # Allows all traffic
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0  # Allow all inbound traffic (not recommended for production)
+      SecurityGroupEgress:
+        - IpProtocol: -1  # Allows all outbound traffic
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  VPCId:
+    Value: !Ref MyVPC
+  InternetGatewayId:
+    Value: !Ref MyInternetGateway
+  DefaultSecurityGroupId:
+    Value: !Ref DefaultSecurityGroup
+  PublicSubnetId:
+    Value: !Ref PublicSubnet
+  PrivateSubnetId:
+    Value: !Ref PrivateSubnet
