@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  VPCId:
+    Type: String
+  PublicSubnetId:
+    Type: String
+  PrivateSubnetId:
+    Type: String
+  InternetGatewayId:
+    Type: String
+  paramUniqueName:
+    Type: String
+    Default: cf-testing
+
+Resources:
+  EIPForNAT:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: VPC
+      Tags:
+      - Key: Name
+        Value: !Ref paramUniqueName
+
+  MyNatGateway:
+    Type: AWS::EC2::NatGateway
+    # DependsOn: MyVPCGatewayAttachment
+    Properties:
+      AllocationId: !GetAtt EIPForNAT.AllocationId
+      SubnetId: !Ref PublicSubnetId
+      Tags:
+        - Key: Name
+          Value: !Ref paramUniqueName
+
+Outputs:
+  NatGatewayId:
+    Value: !Ref MyNatGateway
