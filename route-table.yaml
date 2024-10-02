@@ -15,13 +15,15 @@ Parameters:
     Default: cf-testing
 
 Resources:
+
+  #Create Public Route Table
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPCId
       Tags:
-      - Key: name
-        Value: !Ref paramUniqueName
+      - Key: Name
+        Value: cf-public-route-table
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -36,13 +38,14 @@ Resources:
       SubnetId: !Ref PublicSubnetId
       RouteTableId: !Ref PublicRouteTable
 
+  # Create Private Route Table
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPCId
       Tags:
       - Key: Name
-        Value: !Ref paramUniqueName
+        Value: cf-private-route-table
 
   PrivateRoute:
     Type: AWS::EC2::Route

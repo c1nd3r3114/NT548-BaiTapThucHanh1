@@ -24,7 +24,6 @@ Resources:
 
   MyNatGateway:
     Type: AWS::EC2::NatGateway
-    # DependsOn: MyVPCGatewayAttachment
     Properties:
       AllocationId: !GetAtt EIPForNAT.AllocationId
       SubnetId: !Ref PublicSubnetId
