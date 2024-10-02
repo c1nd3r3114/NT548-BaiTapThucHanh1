@@ -43,7 +43,12 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 14.186.87.128/32  # Replace with your IP
+          CidrIp: 14.186.87.128/32
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 18.206.107.24/29
 
   PrivateSecurityGroup:
     Type: AWS::EC2::SecurityGroup
