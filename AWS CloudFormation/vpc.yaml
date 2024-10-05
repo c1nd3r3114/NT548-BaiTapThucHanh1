@@ -72,12 +72,12 @@ Resources:
         - Key: Name
           Value: !Ref paramUniqueName
       SecurityGroupIngress:
-        - IpProtocol: -1  # Allows all traffic
+        - IpProtocol: -1
           FromPort: -1
           ToPort: -1
-          CidrIp: 0.0.0.0/0  # Allow all inbound traffic (not recommended for production)
+          CidrIp: 0.0.0.0/0 
       SecurityGroupEgress:
-        - IpProtocol: -1  # Allows all outbound traffic
+        - IpProtocol: -1  
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
