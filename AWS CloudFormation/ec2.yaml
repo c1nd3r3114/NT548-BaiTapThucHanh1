@@ -6,6 +6,15 @@ Parameters:
     Type: String
   VPCId:
     Type: String
+  ImageId:
+    Type: String
+    Default: ami-0866a3c8686eaeeba
+  KtxPublicIp:
+    Type: String
+    Default: 14.169.82.131/32
+  ZonePublicIp:
+    Type: String
+    Default: 18.206.107.24/29
 
 Resources:
   PublicEC2Instance:
@@ -16,7 +25,7 @@ Resources:
       SecurityGroupIds:
         - !Ref PublicSecurityGroup
       KeyName: testkeypair
-      ImageId: ami-0ebfd941bbafe70c6
+      ImageId: !Ref ImageId
       Tags:
         - Key: Name
           Value: idk-test-public-ec2
@@ -25,7 +34,7 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
-      ImageId: ami-0ebfd941bbafe70c6
+      ImageId: !Ref ImageId
       NetworkInterfaces:
         - GroupSet:
           - !Ref PrivateSecurityGroup
@@ -47,12 +56,11 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 115.76.48.202/32
-      SecurityGroupIngress:
+          CidrIp: !Ref ZonePublicIp
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 18.206.107.24/29
+          CidrIp: !Ref KtxPublicIp
 
   PrivateSecurityGroup:
     Type: AWS::EC2::SecurityGroup
