@@ -16,7 +16,7 @@ This Terraform project sets up a Virtual Private Cloud (VPC) with public and pri
 
 - Terraform installed on your local machine
 - AWS account with proper access to create VPCs, subnets, gateways, and EC2 instances
-- An AWS key pair (replace `tf-group2-keypair` with your actual key pair)
+- An AWS EC2 key pair (replace `tf-group2-keypair` with your actual key pair)
 
 ## AWS Resources Created
 
@@ -34,8 +34,35 @@ Before running Terraform, ensure that your AWS credentials are configured either
 
 ```bash
 export AWS_ACCESS_KEY_ID=your-access-key-id
-export AWS_SECRET_ACCESS_KEY=your-secret-access-key ```
+export AWS_SECRET_ACCESS_KEY=your-secret-access-key
+```
 
 ## How to use
 
+1. Clone the Repository
 
+```
+git clone https://github.com/c1nd3r3114/NT548-BaiTapThucHanh1.git
+cd NT548-BaiTapThucHanh1
+```
+
+2. Initialize Terraform
+
+Initialize the Terraform workspace before applying the configuration:
+```
+terraform init
+```
+
+3. Plan the Terraform Deployment
+
+Run the following command to generate a plan and preview the changes that Terraform will make to your infrastructure:
+```
+terraform plan
+```
+
+4. Apply the Terraform Configuration
+
+After reviewing the plan, apply the configuration using the following command:
+```
+terraform apply
+```
