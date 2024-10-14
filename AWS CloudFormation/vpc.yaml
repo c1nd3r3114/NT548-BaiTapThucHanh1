@@ -1,95 +1,114 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Parameters:
+  # Parameter for VPC CIDR block
   paramVPC:
     Type: String
     Default: 192.168.100.0/24
+  
+  # Parameter for Public Subnet CIDR block
   paramPublicSubnet:
     Type: String
     Default: 192.168.100.0/25
+  
+  # Parameter for Private Subnet CIDR block
   paramPrivateSubnet:
     Type: String
     Default: 192.168.100.128/25
+  
+  # Parameter for providing a unique name to resources
   paramUniqueName:
     Type: String
     Default: cf-testing
 
 Resources:
 
-#Create VPC, public subnet and private subnet
+  # Create a VPC resource with DNS support and hostname enabled
   MyVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: !Ref paramVPC
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
+      CidrBlock: !Ref paramVPC               # VPC CIDR block from paramVPC
+      EnableDnsSupport: true                 # Enable DNS support
+      EnableDnsHostnames: true               # Enable DNS hostnames
       Tags:
         - Key: Name
-          Value: !Ref paramUniqueName
+          Value: !Ref paramUniqueName        # Name tag based on paramUniqueName
 
+  # Create a public subnet in the first availability zone
   PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: !Ref paramPublicSubnet
-      MapPublicIpOnLaunch: true
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      VpcId: !Ref MyVPC                      # Reference to the VPC created above
+      CidrBlock: !Ref paramPublicSubnet       # Public subnet CIDR block
+      MapPublicIpOnLaunch: true              # Automatically assign public IP on launch
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]  # Select the first availability zone
       Tags:
         - Key: Name
-          Value: !Ref paramUniqueName
+          Value: !Ref paramUniqueName        # Name tag based on paramUniqueName
 
+  # Create a private subnet in the second availability zone
   PrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: !Ref paramPrivateSubnet
-      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      VpcId: !Ref MyVPC                      # Reference to the VPC created above
+      CidrBlock: !Ref paramPrivateSubnet      # Private subnet CIDR block
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]  # Select the second availability zone
       Tags:
         - Key: Name
-          Value: !Ref paramUniqueName
+          Value: !Ref paramUniqueName        # Name tag based on paramUniqueName
 
-  # Create Internet Gateway and attach it to VPC
+  # Create an internet gateway
   MyInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: !Ref paramUniqueName
+          Value: !Ref paramUniqueName        # Name tag based on paramUniqueName
 
+  # Attach the internet gateway to the VPC
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref MyVPC
-      InternetGatewayId: !Ref MyInternetGateway
+      VpcId: !Ref MyVPC                      # Reference to the VPC created above
+      InternetGatewayId: !Ref MyInternetGateway  # Reference to the internet gateway
 
-  # Create Default Security Group
+  # Create a default security group for the VPC
   DefaultSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: cf-testing default security group for VPC
-      VpcId: !Ref MyVPC
+      GroupDescription: cf-testing default security group for VPC  # Security group description
+      VpcId: !Ref MyVPC                      # Reference to the VPC created above
       Tags:
         - Key: Name
-          Value: !Ref paramUniqueName
-      SecurityGroupIngress:
-        - IpProtocol: -1
+          Value: !Ref paramUniqueName        # Name tag based on paramUniqueName
+      SecurityGroupIngress:                  # Allow all inbound traffic
+        - IpProtocol: -1                     # -1 means all protocols
+          FromPort: -1                       # -1 means all ports
+          ToPort: -1
+          CidrIp: 0.0.0.0/0                  # Allow traffic from all IP addresses
+      SecurityGroupEgress:                   # Allow all outbound traffic
+        - IpProtocol: -1                     # -1 means all protocols
           FromPort: -1
           ToPort: -1
-          CidrIp: 0.0.0.0/0 
-      SecurityGroupEgress:
-        - IpProtocol: -1  
-          FromPort: -1
-          ToPort: -1
-          CidrIp: 0.0.0.0/0
+          CidrIp: 0.0.0.0/0                  # Allow traffic to all IP addresses
 
 Outputs:
+  # Output the VPC ID
   VPCId:
     Value: !Ref MyVPC
+
+  # Output the Internet Gateway ID
   InternetGatewayId:
     Value: !Ref MyInternetGateway
+
+  # Output the Default Security Group ID
   DefaultSecurityGroupId:
     Value: !Ref DefaultSecurityGroup
+
+  # Output the Public Subnet ID
   PublicSubnetId:
     Value: !Ref PublicSubnet
+
+  # Output the Private Subnet ID
   PrivateSubnetId:
     Value: !Ref PrivateSubnet
