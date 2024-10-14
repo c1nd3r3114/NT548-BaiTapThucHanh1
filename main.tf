@@ -160,10 +160,10 @@ resource "aws_security_group" "private-ec2-sg" {
 
 # Public EC2 instance
 resource "aws_instance" "public-ec2" {
-  ami           = "ami-07ee04759daf109de" 
+  ami           = "ami-005fc0f236362e99f"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public-subnet.id
-  security_groups = [aws_security_group.public-ec2-sg.name]
+  vpc_security_group_ids = [aws_security_group.public-ec2-sg.id]
   key_name      = "tf-group2-keypair"  
 
   tags = {
@@ -173,10 +173,10 @@ resource "aws_instance" "public-ec2" {
 
 # Private EC2 instance
 resource "aws_instance" "private-ec2" {
-  ami           = "ami-07ee04759daf109de"  
+  ami           = "ami-005fc0f236362e99f"  
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.private-subnet.id
-  security_groups = [aws_security_group.private-ec2-sg.name]
+  vpc_security_group_ids = [aws_security_group.private-ec2-sg.id]
   key_name      = "tf-group2-keypair"  
 
   tags = {
