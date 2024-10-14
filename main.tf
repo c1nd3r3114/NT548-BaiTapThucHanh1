@@ -112,3 +112,74 @@ resource "aws_security_group" "default_sg" {
     Name = "default_sg"
   }
 }
+# Security Group for Public EC2
+resource "aws_security_group" "public-ec2-sg" {
+  vpc_id = aws_vpc.terraform-vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["192.168.1.2/32"]  
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "public-ec2-sg"
+  }
+}
+
+# Security Group for Private EC2 
+resource "aws_security_group" "private-ec2-sg" {
+  vpc_id = aws_vpc.terraform-vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [aws_security_group.public-ec2-sg.id]  # Cho phép từ Public EC2
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "private-ec2-sg"
+  }
+}
+
+# Public EC2 instance
+resource "aws_instance" "public-ec2" {
+  ami           = "ami-07ee04759daf109de" 
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.public-subnet.id
+  security_groups = [aws_security_group.public-ec2-sg.name]
+  key_name      = "tf-group2-keypair"  
+
+  tags = {
+    Name = "public-ec2"
+  }
+}
+
+# Private EC2 instance
+resource "aws_instance" "private-ec2" {
+  ami           = "ami-07ee04759daf109de"  
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.private-subnet.id
+  security_groups = [aws_security_group.private-ec2-sg.name]
+  key_name      = "tf-group2-keypair"  
+
+  tags = {
+    Name = "private-ec2"
+  }
+}
