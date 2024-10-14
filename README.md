@@ -41,7 +41,7 @@ export AWS_SECRET_ACCESS_KEY=your-secret-access-key
 
 1. Clone the Repository
 
-```
+```bash
 git clone https://github.com/c1nd3r3114/NT548-BaiTapThucHanh1.git
 cd NT548-BaiTapThucHanh1
 ```
@@ -49,20 +49,20 @@ cd NT548-BaiTapThucHanh1
 2. Initialize Terraform
 
 Initialize the Terraform workspace before applying the configuration:
-```
+```bash
 terraform init
 ```
 
 3. Plan the Terraform Deployment
 
 Run the following command to generate a plan and preview the changes that Terraform will make to your infrastructure:
-```
+```bash
 terraform plan
 ```
 
 4. Apply the Terraform Configuration
 
 After reviewing the plan, apply the configuration using the following command:
-```
+```bash
 terraform apply
 ```
