@@ -34,15 +34,11 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
-      ImageId: !Ref ImageId
-      NetworkInterfaces:
-        - GroupSet:
-          - !Ref PrivateSecurityGroup
-          AssociatePublicIpAddress: 'true'
-          DeviceIndex: '0'
-          DeleteOnTermination: 'true'
-          SubnetId: !Ref PrivateSubnetId
+      SubnetId: !Ref PrivateSubnetId
+      SecurityGroupIds:
+        - !Ref PrivateSecurityGroup
       KeyName: testkeypair
+      ImageId: !Ref ImageId
       Tags:
         - Key: Name
           Value: idk-test-private-ec2
