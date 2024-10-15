@@ -43,7 +43,7 @@ export AWS_SECRET_ACCESS_KEY=your-secret-access-key
 
 ```bash
 git clone https://github.com/c1nd3r3114/NT548-BaiTapThucHanh1.git
-cd NT548-BaiTapThucHanh1
+cd NT548-BaiTapThucHanh1/terraform
 ```
 
 2. Initialize Terraform
