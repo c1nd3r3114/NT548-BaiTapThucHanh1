@@ -22,7 +22,7 @@ resource "aws_subnet" "public-subnet" {
   vpc_id     = aws_vpc.terraform-vpc.id
   cidr_block = "10.0.2.0/24"
   availability_zone = "us-east-1a"
-  #map_public_ip_on_launch = true
+  map_public_ip_on_launch = true
   tags = {
     Name = "public-subnet"
   }
@@ -143,7 +143,7 @@ resource "aws_security_group" "private-ec2-sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    security_groups = [aws_security_group.public-ec2-sg.id]  # Cho phép từ Public EC2
+    security_groups = [aws_security_group.public-ec2-sg.id]  # allow connection from Public EC2
   }
 
   egress {
@@ -164,6 +164,7 @@ resource "aws_instance" "public-ec2" {
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public-subnet.id
   vpc_security_group_ids = [aws_security_group.public-ec2-sg.id]
+  associate_public_ip_address  = true
   key_name      = "tf-group2-keypair"  
 
   tags = {
