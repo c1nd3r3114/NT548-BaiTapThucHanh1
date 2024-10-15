@@ -16,7 +16,7 @@ This Terraform project sets up a Virtual Private Cloud (VPC) with public and pri
 
 - Terraform installed on your local machine
 - AWS account with proper access to create VPCs, subnets, gateways, and EC2 instances
-- An AWS EC2 key pair (replace `tf-group2-keypair` with your actual key pair)
+- An AWS EC2 key pair (replace `group2-keypair` with your actual key pair)
 
 ## AWS Resources Created
 
