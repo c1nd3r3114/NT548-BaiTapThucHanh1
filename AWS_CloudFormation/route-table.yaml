@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  # VPC ID, public, private subnet IDs, Internet Gateway ID, and NAT Gateway ID are provided as parameters.
+  VPCId:
+    Type: String
+  PublicSubnetId:
+    Type: String
+  PrivateSubnetId:
+    Type: String
+  InternetGatewayId:
+    Type: String
+  NatGatewayId:
+    Type: String
+  
+  # Unique name for tagging resources, with a default value of 'cf-testing'.
+  paramUniqueName:
+    Type: String
+    Default: cf-testing
+
+Resources:
+
+  # Create a public route table for the VPC
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPCId   # Reference to the VPCId parameter
+      Tags:
+      - Key: Name
+        Value: cf-public-route-table   # Tag the public route table with a name
+
+  # Create a route in the public route table that directs all traffic (0.0.0.0/0) to the Internet Gateway
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable         # Associate route with the public route table
+      DestinationCidrBlock: 0.0.0.0/0             # Route all traffic
+      GatewayId: !Ref InternetGatewayId           # Use Internet Gateway for outbound traffic
+
+  # Associate the public route table with the public subnet
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetId               # Reference to public subnet ID
+      RouteTableId: !Ref PublicRouteTable         # Reference to the public route table
+
+  # Create a private route table for the VPC
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPCId   # Reference to the VPCId parameter
+      Tags:
+      - Key: Name
+        Value: cf-private-route-table  # Tag the private route table with a name
+
+  # Create a route in the private route table that directs all traffic (0.0.0.0/0) to the NAT Gateway
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable        # Associate route with the private route table
+      DestinationCidrBlock: 0.0.0.0/0             # Route all traffic
+      NatGatewayId: !Ref NatGatewayId             # Use NAT Gateway for outbound traffic from private subnet
+
+  # Associate the private route table with the private subnet
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetId              # Reference to private subnet ID
+      RouteTableId: !Ref PrivateRouteTable        # Reference to the private route table
+
+Outputs:
+  # Output the public route table ID
+  PublicRouteTableId:
+    Value: !Ref PublicRouteTable
+
+  # Output the private route table ID
+  PrivateRouteTableId:
+    Value: !Ref PrivateRouteTable
