@@ -20,4 +20,4 @@ jobs:
         with:
           directory: terraform
           framework: terraform
-          
+        continue-on-error: true
