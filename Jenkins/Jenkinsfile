@@ -1,9 +1,14 @@
 pipeline {
     agent any
 
+    triggers {
+        // Tự động trigger khi có commit mới trên repository
+        pollSCM('* * * * *') 
+    }
+
     environment {
-        DOCKER_IMAGE = "hunger1607/c1nd3r-webapp"
-        SONARQUBE_SERVER = "SonarQube" 
+        DOCKER_IMAGE = "my-microservice-app"
+        SONARQUBE_SERVER = "SonarQube"
     }
 
     stages {
