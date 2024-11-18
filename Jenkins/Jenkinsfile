@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "hunger1607/c1nd3r-webapp"
+        SONARQUBE_SERVER = "SonarQube" 
+    }
+
+    stages {
+        stage('Checkout Source Code') {
+            steps {
+                echo "Checking out the source code..."
+                checkout scm
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv(env.SONARQUBE_SERVER) {
+                        sh """
+                        ./mvnw sonar:sonar \
+                            -Dsonar.projectKey=my-microservice \
+                            -Dsonar.host.url=$SONAR_HOST_URL \
+                            -Dsonar.login=$SONAR_AUTH_TOKEN
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                echo "Building the application..."
+                sh './mvnw clean package'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image..."
+                sh "docker build -t ${DOCKER_IMAGE}:latest ."
+            }
+        }
+
+        stage('Run Tests in Docker') {
+            steps {
+                echo "Running tests in Docker..."
+                sh """
+                docker run --rm ${DOCKER_IMAGE}:latest \
+                sh -c 'java -jar /app/tests.jar'
+                """
+            }
+        }
+
+        stage('Deploy to Local Docker') {
+            steps {
+                echo "Deploying application to local Docker..."
+                sh """
+                docker stop ${DOCKER_IMAGE} || true
+                docker rm ${DOCKER_IMAGE} || true
+                docker run -d --name ${DOCKER_IMAGE} -p 8080:8080 ${DOCKER_IMAGE}:latest
+                """
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Cleaning up Docker environment..."
+            sh """
+            docker system prune -f
+            """
+        }
+
+        success {
+            echo "Pipeline executed successfully."
+        }
+
+        failure {
+            echo "Pipeline failed. Please check the logs."
+        }
+    }
+}
