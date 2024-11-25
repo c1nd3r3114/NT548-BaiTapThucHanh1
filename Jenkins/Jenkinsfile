@@ -34,12 +34,25 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                echo "Building Docker image..."
-                sh "docker build -t ${DOCKER_IMAGE}:latest ."
-            }
+stage('Build Docker Image') {
+    steps {
+        script {
+            // Tạo các biến tag
+            def versionTag = "v1.0-${env.BUILD_NUMBER}" // Sử dụng số build làm phiên bản
+            def commitHash = env.GIT_COMMIT?.take(7) // Sử dụng 7 ký tự đầu của commit hash
+            def timestamp = new Date().format("yyyyMMdd-HHmmss", TimeZone.getTimeZone('UTC'))
+
+            // Gắn tag cuối cùng cho image
+            def dockerTag = "${DOCKER_IMAGE}:${versionTag}-${commitHash}-${timestamp}"
+            env.DOCKER_TAG = dockerTag // Lưu tag để sử dụng trong các bước tiếp theo
+
+            echo "Building Docker image with tag: ${dockerTag}"
+
+            // Build Docker image với tag mới
+            sh "docker build -t ${dockerTag} ."
         }
+    }
+}
 
         stage('Scan Docker Image with Trivy') {
             steps {
