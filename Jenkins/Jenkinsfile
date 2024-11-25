@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE = "my-microservice-app"
+        DOCKER_IMAGE = "hunger1607/c1nd3r-webapp"
         SONARQUBE_SERVER = "SonarQube"
     }
 
