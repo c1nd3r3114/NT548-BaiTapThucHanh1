@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "hunger1607/c1nd3r-webapp"
-        SONARQUBE_SERVER = "SonarQube"
+        SONARQUBE_SERVER = "http://localhost:9000"
     }
 
     stages {
@@ -31,13 +31,6 @@ pipeline {
                         """
                     }
                 }
-            }
-        }
-
-        stage('Build Application') {
-            steps {
-                echo "Building the application..."
-                sh './mvnw clean package'
             }
         }
 
