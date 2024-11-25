@@ -48,6 +48,15 @@ pipeline {
             }
         }
 
+        stage('Scan Docker Image with Trivy') {
+            steps {
+                echo "Scanning Docker image with Trivy..."
+                sh """
+                trivy image --severity HIGH,CRITICAL ${DOCKER_IMAGE}:latest || exit 1
+                """
+            }
+        }
+
         stage('Run Tests in Docker') {
             steps {
                 echo "Running tests in Docker..."
