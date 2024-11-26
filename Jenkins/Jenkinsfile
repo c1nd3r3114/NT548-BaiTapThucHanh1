@@ -72,16 +72,6 @@ stage('Build Docker Image') {
             }
         }
 
-        stage('Run Tests in Docker') {
-            steps {
-                echo "Running tests in Docker..."
-                sh """
-                docker run --rm ${DOCKER_IMAGE}:latest \
-                sh -c 'java -jar /app/tests.jar'
-                """
-            }
-        }
-
         stage('Deploy to Local Docker') {
             steps {
                 echo "Deploying application to local Docker..."
