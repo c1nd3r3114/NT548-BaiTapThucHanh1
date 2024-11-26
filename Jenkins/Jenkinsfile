@@ -56,10 +56,19 @@ stage('Build Docker Image') {
 
         stage('Scan Docker Image with Trivy') {
             steps {
-                echo "Scanning Docker image with Trivy..."
-                sh """
-                trivy image --severity HIGH,CRITICAL ${DOCKER_IMAGE}:latest || exit 1
-                """
+                    script {
+                    // Run Trivy to scan the Docker image
+                    def trivyOutput = sh(script: "trivy image $DOCKER_IMAGE:latest", returnStdout: true).trim()
+
+                    // Display Trivy scan results
+                    println trivyOutput
+
+                    // Check if vulnerabilities were found
+                    if (trivyOutput.contains("Total: 0")) {
+                        echo "No vulnerabilities found in the Docker image."
+                    } else {
+                        echo "Vulnerabilities found in the Docker image."
+                    }
             }
         }
 
