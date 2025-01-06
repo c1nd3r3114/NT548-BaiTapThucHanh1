@@ -1,0 +1,14 @@
+ignore_checks:
+  - W3002  # This is for having to deploy templates using aws cloudformation package
+  - W3005
+  - I1022  # Prefer sub over join on empty delimiter
+  - I3011  # Set explicit values for UpdateReplacePolicy / DeletionPolicy on potentially stateful resource
+  - W3687
+  - W2001
+  - E3030
+  - W2506
+include_checks:
+  - I
+regions:
+  - us-east-1
+  - us-west-2

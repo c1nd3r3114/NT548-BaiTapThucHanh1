@@ -1,0 +1,32 @@
+version: 0.2
+
+env:
+  variables:
+    TEMPLATES_BUCKET: group4-cloudformation
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo Installing dependencies...
+      - pip install cfn-lint
+      - pip install --upgrade taskcat
+  pre_build:
+    commands:
+      - echo Running cfn-lint...
+      - cfn-lint AWSCloudFormation/vpc.yaml
+      - cfn-lint AWSCloudFormation/nat-gateway.yaml
+      - cfn-lint AWSCloudFormation/route-tables.yaml
+      - cfn-lint AWSCloudFormation/ec2.yaml
+      - cfn-lint AWSCloudFormation/main.yaml
+  build:
+    commands:
+      - aws s3 sync AWSCloudFormation/ s3://$TEMPLATES_BUCKET --delete
+      - echo Running Taskcat...
+      - taskcat test run
+artifacts:
+  name: AWSCloudFormation
+  files:
+    - 'main.yml'
+  base-directory: 'AWSCloudFormation'

@@ -1,0 +1,11 @@
+project:
+  name: awscloudformation
+  regions:
+    - us-east-1
+
+tests:
+  deploy-stack:
+    template: ./AWSCloudFormation/main.yaml
+    regions:
+      - us-east-1
+    
